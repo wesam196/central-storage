@@ -21,10 +21,9 @@ Route::get('/', function () {
 
 
 Route::get('/',  '\App\Http\controllers\homeController@index')->middleware('auth');
-//Route::post('/',  '\App\Http\controllers\downloadController@download')->name('download')->middleware('auth');
 Route::post('/',  '\App\Http\controllers\homeController@share')->middleware('auth');
 
-Route::post('/', '\App\Http\Controllers\DownloadController@download')->name('download.file')->middleware('auth');
+Route::get('/download/{id}', '\App\Http\Controllers\DownloadController@download')->name('download.file')->middleware('auth');
 
 
 

@@ -26,7 +26,7 @@
         <tr>
             <th>{{$file->filename}}</th>
             <th><input type="checkbox" name='assigned[]' value={{$file->id}} ></th>
-            <th><input type="checkbox" name='download[]' value={{$file->id}} ></th>
+            <th><a href="{{ url('/download/' . $file->id) }}">{{$file->id}}</a></th>
            
         </tr>
         @endforeach
@@ -38,7 +38,7 @@
             @endforeach
         </select>
     <input type="submit" onclick="submit" >
-    <button></button>
+    
 </form>
 
 
