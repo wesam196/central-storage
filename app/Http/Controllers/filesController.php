@@ -14,17 +14,7 @@ class filesController extends Controller
     
     public function store(Request $request)
     {
-        /*
-        $request->validate([
-            'file' => 'required|file|max:2048|mimes:pdf,docx,jpg,jpeg,png,mp4'
-        ]);
-*/
-
-        
-
-
-//$request->file('dwf_file')->getMimeType() or getClientMimeType()
-        
+         
         $files = $request->file('file');//->getMimeType();
         foreach ($files as $file) {
 
@@ -40,10 +30,37 @@ class filesController extends Controller
           
         ]);
     }
-        return response()->json([
-            'message' => 'File uploaded successfully',
-            'data' => $fileModel,
-        ]);       
+        return redirect()->back()->with('msg', 'File/Files uploaded successfully');      
         
     }
+
+
+
+    public function edit($id){
+
+        return view ("edit");
+        upload_edit($id);
+        return view("home");
+    }
+
+    public function upolad_edit( $id){
+        $data = files::FindOrFail($id);
+
+        $file = $request->file('file');
+
+      
+        $path = Storage::disk('local')->put( auth()->id(),$file);
+
+        
+        
+        $data->size= $file->getSize();
+        $data->path=  $path;
+        $data->save();
+          
+       
+    
+        return view("home");
+    }
+
+
 }

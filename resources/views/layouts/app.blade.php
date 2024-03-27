@@ -18,7 +18,11 @@
         @livewireStyles
     </head>
     <body class="font-sans antialiased">
-       
+        <x-banner />
+
+        <div class=" ">
+            @livewire('navigation-menu')
+
             <!-- Page Heading -->
             @if (isset($header))
                 <header class="bg-white shadow">

@@ -31,6 +31,7 @@ Route::get('/change', function () {
     return view('change-user');
 });
 
+Route::get('/edit/{id}', '\App\Http\controllers\filesController@edit');
 
 
 Route::get('/update-permission/{email}', '\App\Http\controllers\register@edit')->name('update-permission');

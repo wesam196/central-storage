@@ -6,29 +6,7 @@ use Illuminate\Http\Request;
 
 class register extends Controller
 {
-    /*
-    public function addpermision(Request $request, $id){
-       /*
-        $data=new permision();
-        $name = permision::findOrFail(1);
-        $name -> permision=request('permision');
-      
-       // $name -> save();
-        
-        return view('change-user');
-
-
-
-
- 
-$record = permision::findOrFail($id);
-$record->update($request->all()); // Mass assignment for convenience
-
-return redirect()->route('records.index')->with('success', 'Record updated successfully!');
-
-    }
-
-*/
+    
 
     public function edit(Request $request, $email)
     {

@@ -1,13 +1,20 @@
+@extends('layouts.template')
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload</title>
-</head>
-<body>
-    <h1>Upload File</h1>
+@section('uploadHeader')
+
+<title>Upload File</title>
+
+@endsection
+
+
+@section('uploadBody')
+@if(session()->has('msg'))
+            <div class="alert alert-success">
+            {{session()->get('msg')}}
+            <button data-dismiss="alert" class="close">X</button>
+            </div>
+            @endif
+<h1>Upload File</h1>
   
     <form action="{{ route('upload.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -17,6 +24,6 @@
         </div>
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
-</body>
-</html>
 
+
+@endsection

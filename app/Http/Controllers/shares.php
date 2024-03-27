@@ -3,84 +3,57 @@
 namespace App\Http\Controllers;
 use App\Models\share;
 use App\Models\files;
-
+use App\Models\user;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 
-class shares extends Controller
-{
+class shares extends Controller{
 
 
-public function toOther()
-{
-    $data = share::all();
-    $file = files::all();
-    $fileNamesList = [];
-    $fileNamesName=[];
-    $fileNames=[];
-    foreach ($data as $fileIds) {
-        if($fileIds->creator_id ==  auth()->id()){
-        $results = \DB::table('files')
-            ->where('id',  $fileIds->file_id)
-            ->select('filename')
-            ->get();
 
-            $name = \DB::table('users')
-            ->where('id',  $fileIds->user_id)
-            ->select('name')
-            ->get();
-                    
-        //foreach ($results as $result) {
-            $fileNamesList[] = $results->last()->filename;
-            $fileNamesName[] = $name->last()->name;
-            $fileNames['fileNamesList']=$fileNamesList;
-            $fileNames['fileNamesName']=$fileNamesName;
+
+public function toOther(){
+
+    $data = Share::where('creator_id', '=', auth()->id())->paginate(10);
+
+    $fulldata=[];
+    foreach ($data as $item) {
+        $files = files::FindOrFail($item->file_id);
+        $name = user::FindOrFail($item->user_id); 
+
+        $fulldata[] = [
+            'file_id' => $item->file_id,
+            'filename' => $files->filename,
+            'shared_to' => $name->name
+        ];
     }
-    }
-   
+
+    return view('sharedToOther', ['fulldata' => $fulldata , 'shares'=>$data]);
 
 
-
-
-    return view('sharedToOther', ['data' => $data, 'fileNames' => $fileNames ]);
 }
 
+public function toME(){
+    $data = Share::where('user_id', '=', auth()->id())->paginate(10);
 
-public function toME()
-{
-    $data = share::all();
-    $file = files::all();
-    $fileNamesList = [];
-    $fileNamesName=[];
-    $fileNames=[];
-    foreach ($data as $fileIds) {
-        if($fileIds->user_id ==  auth()->id()){
-        $results = \DB::table('files')
-            ->where('id',  $fileIds->file_id)
-            ->select('filename')
-            ->get();
+    $fulldata=[];
+    foreach ($data as $item) {
+        $files = files::FindOrFail($item->file_id);
+        $name = user::FindOrFail($item->user_id); 
 
-            $name = \DB::table('users')
-            ->where('id',  $fileIds->creator_id)
-            ->select('name')
-            ->get();
-                    
-        //foreach ($results as $result) {
-            $fileNamesList[] = $results->last()->filename;
-            $fileNamesName[] = $name->last()->name;
-            $fileNames['fileNamesList']=$fileNamesList;
-            $fileNames['fileNamesName']=$fileNamesName;
+        $fulldata[] = [
+            'file_id' => $item->file_id,
+            'filename' => $files->filename,
+            'shared_to' => $name->name
+        ];
     }
-    }
-   
+
+    return view('sharedToME', ['fulldata' => $fulldata , 'shares'=>$data]);
 
 
 
 
-    return view('sharedToME', ['data' => $data, 'fileNames' => $fileNames ]);
 }
-
-
-
 
 
 }

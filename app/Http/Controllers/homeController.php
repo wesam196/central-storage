@@ -7,63 +7,63 @@ use App\Models\user;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use App\Services\FileService;
+
 
 class homeController extends Controller
 {
 
-    public function index(){
-        $data =  files::where('user_id', 'like', auth()->id())->get();
-        $users = user::all();
-   return view('home' , ['data' => $data , 
+    public function index(){   
+        $athunticate = (new FileService);
+        $data =  files::all();
+        $users = User::where('id', '!=', auth()->id())->get();
+        $Files = [];
+        foreach($data as $data){
+            if($athunticate->userAuth($data->id)){
+                $Files[]=$data;
+            }
+        }
+       
+   return view('home' , ['data' => $Files , 
                         'users' =>$users
 ]);
 
 }
 
-public function share(Request $request){
-      
+public function share(Request $request){    
         
-      if ($request->has('assigned')){
-
-        $j=request('user_id');
-
-        $results = \DB::table('users')
-        ->whereIn('name', $j)
-        ->select('id')
-        ->get();
-
+    $user_id =$request->get('user_id');
+    $user = User::findOrFail($user_id)->first();
+    $getfiles = $request->input('assigned');
+    
+    $shares = Share::where('user_id', '=', $user->id)
+    ->whereIn('file_id', $getfiles)
+    ->get();
 
 
-        if ($results->isNotEmpty()) {
-            $firstResult = $results->first(); // Get the first element of the collection
+        foreach ($getfiles as $file) {
+            $unsahred[]=$file;
+            $shares = Share::where('user_id', '=', $user->id)
+            ->where('file_id','=', $file)->get();
             
-            $getfiles=$request->input('assigned');
-            foreach($getfiles as $file){
-
-            $data = new share();
-            $data->creator_id = auth()->id();
-            $data->user_id = $firstResult->id; // Access the 'id' property of the first result
+            if ($shares->isEmpty()){                   
+                    $data = new share();
+                    $data->creator_id = auth()->id();
+                    $data->user_id = $user->id;
+                    $data->file_id = $file;
+                    $data->save();
+                           
+                }             
             
-            
-            $data->file_id = $file;
-            
-            $data->save();
-
-        }
-        }
-
-
-        return redirect('/shareToOther')->with('msg', 'files shared successfully');
+            }
+    
+            return redirect()->back()->with('msg', 'the transaction done check from "share to other" page'); 
 
     }
     
-    elseif($request->has('download')==true){
-        session(['field1' => $request->input('download[]')]);
-       // session(['field2' => $field2]);
-        return redirect()->route("download.file");
-    }
+    
    
-}
+
 
 
 
